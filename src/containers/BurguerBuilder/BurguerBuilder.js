@@ -109,28 +109,17 @@ class BurguerBuilder extends Component {
 
     purchaseContinueHandler = () => {
         //alert("You continue!");
-        this.setState({ loading: true });
-        const order = {
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'Gustavo',
-                address: {
-                    street: 'Mengano 1674',
-                    zipCode: '7661',
-                    country: 'Argentina'
-                },
-                email: 'test@test.com'
-            },
-            deliveryMethod: 'fastest'
-        }; //el price es una muy buena idea calcularlo desde el servidor para evitar que un usuario pueda manipular el precio, pero en este caso se lo paso por aca
-        axios.post('/orders.json', order)
-            .then(response => {
-                this.setState({ loading: false, purchasing: false });
-            })
-            .catch(error => {
-                this.setState({ loading: false, purchasing: false });
-            }); //el .json solo para firebase funciona
+        
+        const queryParams = [];
+        for (let i in this.state.ingredients) {
+            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+        }
+        queryParams.push('price=' + this.state.totalPrice);
+        const queryString = queryParams.join('&');
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        });
     }
 
     render() {
@@ -158,7 +147,7 @@ class BurguerBuilder extends Component {
                         purchasable={this.state.purchasable}
                         price={this.state.totalPrice}
                         ordered={this.purchaseHandler}
-                    />;
+                    />
                 </Aux>
             );
             orderSummary = <OrderSummary 
