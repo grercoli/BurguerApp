@@ -8,7 +8,8 @@ import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import { connect } from 'react-redux';
-import * as actionTypes from '../../store/actions';
+import * as burguerBuilderActions from '../../store/actions/index'; //puedo no escribir index porque automaticamente lo toma de la carpeta actions
+import * as actions from '../../store/actions/index';
 
 //I name global variables in all capital letters
 // const INGREDIENT_PRICES = {
@@ -29,15 +30,16 @@ class BurguerBuilder extends Component {
     //object: "keys" are the values of the ingredients and the "value" is the amount
     state = {
         //purchasable: false,
-        purchasing: false,
-        loading: false,
-        error: false
+        purchasing: false
+        //loading: false,
+        //error: false
     }
 
     componentDidMount() {
+        this.props.onInitIngredients();
         // axios.get('https://react-my-burguer-3d025.firebaseio.com/ingredients.json')
         //     .then(response => {
-        //         this.setState({ingredients: response.data})
+        //         this.setState({ingredients: response.data}) //en lugar de un setState podria hacer dispatch de una action
         //     })
         //     .catch(error => {
         //         this.setState({error: true});
@@ -121,6 +123,7 @@ class BurguerBuilder extends Component {
         //     pathname: '/checkout',
         //     search: '?' + queryString
         // });
+        this.props.onInitPurchase();
         this.props.history.push('/checkout');
     }
 
@@ -136,7 +139,7 @@ class BurguerBuilder extends Component {
         }
 
         let orderSummary = null;
-        let burguer = this.state.error ? <p>Ingredients can't be loaded</p> : <Spinner />;
+        let burguer = this.props.error ? <p>Ingredients can't be loaded</p> : <Spinner />;
 
         if(this.props.ings) {
             burguer = (
@@ -159,9 +162,9 @@ class BurguerBuilder extends Component {
                 purchaseContinued={this.purchaseContinueHandler} />;
         }
 
-        if(this.state.loading) {
-            orderSummary = <Spinner />;
-        }
+        // if(this.state.loading) {
+        //     orderSummary = <Spinner />;
+        // }
 
         return(
             <Aux>
@@ -176,15 +179,18 @@ class BurguerBuilder extends Component {
 
 const mapStateToProps = state => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice
+        ings: state.burguerBuilder.ingredients,
+        price: state.burguerBuilder.totalPrice,
+        error: state.burguerBuilder.error
     };
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingName}),
-        onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName})
+        onIngredientAdded: (ingName) => dispatch(actions.addIngredient(ingName)),
+        onIngredientRemoved: (ingName) => dispatch(actions.removeIngredient(ingName)),
+        onInitIngredients: () => dispatch(actions.initIngredients()),
+        onInitPurchase: () => dispatch(actions.purchaseInit())
     };
 }
 
