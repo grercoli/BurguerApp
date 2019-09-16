@@ -24,10 +24,10 @@ export const purchaseBurgerStart = () => { //action creator asincrono
     };
 };
 
-export const purchaseBurger = ( orderData ) => { //action creator asincrono
+export const purchaseBurger = ( orderData, token ) => { //action creator asincrono
     return dispatch => {
         dispatch( purchaseBurgerStart() );
-        axios.post( '/orders.json', orderData )
+        axios.post( '/orders.json?auth=' + token, orderData )
             .then( response => {
                 console.log( response.data );
                 dispatch( purchaseBurgerSuccess( response.data.name, orderData ) );
@@ -64,10 +64,11 @@ export const fetchOrdersStart = () => {
     };
 };
 
-export const fetchOrders = () => {
+export const fetchOrders = (token, userId) => {
     return dispatch => {
         dispatch(fetchOrdersStart());
-        axios.get( '/orders.json' )
+        const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"'; //orderBy es un query param que solo entiende firebase
+        axios.get( '/orders.json' + queryParams )
             .then( res => {
                 const fetchedOrders = [];
                 for ( let key in res.data ) {

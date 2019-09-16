@@ -110,7 +110,8 @@ class ContactData extends Component {
         const order = {
             ingredients: this.props.ings,
             price: this.props.price,
-            orderData: formData
+            orderData: formData,
+            userId: this.props.userId
         } //el price es una muy buena idea calcularlo desde el servidor para evitar que un usuario pueda manipular el precio, pero en este caso se lo paso por aca
         // axios.post('/orders.json', order)
         //     .then(response => {
@@ -120,7 +121,7 @@ class ContactData extends Component {
         //     .catch(error => {
         //         this.setState({ loading: false });
         //     }); //el .json solo para firebase funciona
-        this.props.onOrderBurger(order);
+        this.props.onOrderBurger(order, this.props.token);
     }
 
     checkValidity = (value, rules) => {
@@ -223,13 +224,15 @@ const mapStateToProps = state => {
     return {
         ings: state.burguerBuilder.ingredients,
         price: state.burguerBuilder.totalPrice,
-        loading: state.order.loading
+        loading: state.order.loading,
+        token: state.auth.token,
+        userId: state.auth.userId //para que agregue el userID en la orden
     };
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
+        onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
     };
 };
 
