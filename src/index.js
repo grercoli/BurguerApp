@@ -11,7 +11,7 @@ import orderReducer from './store/reducers/order';
 import authReducer from './store/reducers/auth';
 import thunk from 'redux-thunk';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; //antes de mandarlo a prod deshacerme de esto o por lo menos ocultarlo para prod mode y usarlo solo para dev
 
 const rootReducer = combineReducers({
     burguerBuilder: burguerBuilderReducer,
