@@ -19,7 +19,7 @@ import * as actions from '../../store/actions/index';
 //     bacon: 0.7
 // };
 
-class BurguerBuilder extends Component {
+export class BurguerBuilder extends Component {
     //This is the old way
     // constructor(props) {
     //     super(props);
